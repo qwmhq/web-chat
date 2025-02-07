@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 
 interface IUser {
   username: string;
-  email: string;
   password: string;
 }
 
@@ -16,11 +15,6 @@ export interface UserDocument extends IUser, mongoose.Document {
 const userSchema = new mongoose.Schema(
   {
     username: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    email: {
       type: String,
       required: true,
       unique: true,
@@ -53,9 +47,11 @@ userSchema.set("toJSON", {
     delete returnedObj._id;
     delete returnedObj.__v;
     delete returnedObj.password;
+    delete returnedObj.createdAt;
+    delete returnedObj.updatedAt;
   },
 });
 
-export const User = mongoose.model<UserDocument>("User", userSchema);
+const User = mongoose.model<UserDocument>("User", userSchema);
 
 export default User;

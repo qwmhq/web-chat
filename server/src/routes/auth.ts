@@ -15,7 +15,7 @@ router.post("/signup", validateData(newUserSchema), async (req, res, next) => {
       error instanceof Error &&
       error.message.includes("E11000 duplicate key error")
     ) {
-      res.status(409).json({ error: "email or username is taken" });
+      res.status(409).json({ error: "username is taken" });
       return;
     } else {
       next(error);

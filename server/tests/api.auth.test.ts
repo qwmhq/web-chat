@@ -49,7 +49,6 @@ describe("/api/auth", async () => {
 
         t.isNotNull(userInDb);
         t.assert(userInDb.username === returnedUser.username);
-        t.assert(userInDb.email === returnedUser.email);
         t.assert(userInDb.password.length === 60);
       });
     });

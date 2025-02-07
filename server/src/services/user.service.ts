@@ -29,7 +29,6 @@ const loginUser = async (username: string, password: string) => {
   const tokenPayload = {
     id: user.id,
     username,
-    email: user.email,
   };
 
   if (!config.JWT_SECRET) {
