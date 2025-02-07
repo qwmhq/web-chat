@@ -7,8 +7,8 @@ import { AccountContext, UserStateActions } from "../../reducers/userReducer";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [username, _resetUsername] = useField("text");
-  const [password, _resetPassword] = useField("password");
+  const [usernameField, _resetUsername] = useField("text");
+  const [passwordField, _resetPassword] = useField("password");
 
   const [userState, userStateDispatch] = useContext(AccountContext);
   const [error, setError] = useState("");
@@ -17,8 +17,8 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const response = await authService.login({
-        username: username.value,
-        password: password.value,
+        username: usernameField.value,
+        password: passwordField.value,
       });
       userStateDispatch({ type: UserStateActions.Login, payload: response });
       navigate("/");
@@ -51,7 +51,7 @@ const LoginPage = () => {
               Username
             </label>
             <input
-              {...username}
+              {...usernameField}
               id="username"
               placeholder="username"
               autoComplete="off"
@@ -63,7 +63,7 @@ const LoginPage = () => {
               Password
             </label>
             <input
-              {...password}
+              {...passwordField}
               id="password"
               placeholder="password"
               className="w-full"

@@ -1,5 +1,4 @@
 export interface SignupRequest {
-  email: string;
   username: string;
   password: string;
 }
@@ -23,8 +22,13 @@ export interface UserState {
   currentUserLoaded: boolean;
 }
 
+export interface User {
+  id: string;
+  username: string;
+}
+
 export interface Chat {
-  user: { id: string; username: string };
+  user: User;
   messages: {
     senderId: string;
     receiverId: string;

@@ -6,9 +6,8 @@ import { useField } from "../../hooks";
 import { AxiosError } from "axios";
 
 const SignupPage = () => {
-  const [email, _resetEmail] = useField("email");
-  const [username, _resetUsername] = useField("text");
-  const [password, _resetPassword] = useField("password");
+  const [usernameField, _resetUsername] = useField("text");
+  const [passwordField, _resetPassword] = useField("password");
 
   const [error, setError] = useState("");
 
@@ -18,9 +17,8 @@ const SignupPage = () => {
     e.preventDefault();
     try {
       await authService.signup({
-        email: email.value,
-        username: username.value,
-        password: password.value,
+        username: usernameField.value,
+        password: passwordField.value,
       });
       navigate("/login");
     } catch (error) {
@@ -40,24 +38,12 @@ const SignupPage = () => {
         <h2 className="text-2xl font-bold text-center">Sign Up</h2>
         <form onSubmit={onSubmit}>
           <div className="mt-4">
-            <label htmlFor="email" className="block">
-              Email
-            </label>
-            <input
-              id="email"
-              {...email}
-              placeholder="email"
-              autoComplete="off"
-              className="w-full"
-            />
-          </div>
-          <div className="mt-6">
             <label htmlFor="username" className="block">
               Username
             </label>
             <input
               id="username"
-              {...username}
+              {...usernameField}
               placeholder="username"
               autoComplete="off"
               className="w-full"
@@ -69,9 +55,9 @@ const SignupPage = () => {
             </label>
             <input
               id="password"
-              {...password}
+              {...passwordField}
               placeholder="password"
-              autoComplete="off"
+              autoComplete="new-password"
               className="w-full"
             />
           </div>
