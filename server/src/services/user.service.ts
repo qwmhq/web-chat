@@ -19,6 +19,11 @@ const getUsers = async () => {
   return User.find({});
 };
 
+const searchUsers = async ({ username }: { username: string }) => {
+  const rgx = new RegExp(username.trim(), "gi");
+  return User.find({ username: rgx });
+};
+
 const loginUser = async (username: string, password: string) => {
   const user = await findUserByUsername(username);
 
@@ -49,6 +54,7 @@ const deleteAllUsers = async () => {
 export default {
   createUser,
   getUsers,
+  searchUsers,
   findUserById,
   loginUser,
   deleteAllUsers,
