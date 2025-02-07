@@ -1,8 +1,8 @@
-import { apiBaseUrl } from "../constants";
+import { API_BASE_URL } from "../constants";
 import axios from "axios";
 import { LoginRequest, LoginResponse, SignupRequest } from "../types";
 
-const baseUrl = `${apiBaseUrl}/auth`;
+const baseUrl = `${API_BASE_URL}/auth`;
 
 const login = async (obj: LoginRequest) => {
   const { data } = await axios.post<LoginResponse>(`${baseUrl}/login`, obj);

@@ -1,12 +1,46 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AccountContext } from "../../reducers/userReducer";
+import { io, Socket } from "socket.io-client";
 import SideBar from "./SideBar";
 import Chat from "./Chat";
 import { ChatContext, ChatStateActions } from "../../reducers/chatReducer";
+import { CurrentUser } from "../../types";
+import { SOCKET_URL } from "../../constants";
 
 const ChatPage = () => {
   const [userState, _userStateDispatch] = useContext(AccountContext);
   const [chatState, chatStateDispatch] = useContext(ChatContext);
+
+  const connectSocket = (user: CurrentUser) => {
+    return io(SOCKET_URL, {
+      auth: {
+        token: user.token,
+      },
+    });
+  };
+
+  const [socket, setSocket] = useState<Socket>(() =>
+    connectSocket(userState.currentUser!),
+  );
+
+  useEffect(() => {
+    const socket = connectSocket(userState.currentUser!);
+
+    socket.io.on("error", (error) => {
+      console.log("couldn't connect sockets");
+      console.error("error:", error);
+    });
+
+    socket.on("ping", () => {
+      console.log("server pinged!");
+    });
+
+    setSocket(socket);
+
+    return () => {
+      socket.removeAllListeners();
+    };
+  }, [userState.currentUser]);
 
   useEffect(() => {
     const chats = [
@@ -108,7 +142,7 @@ const ChatPage = () => {
   }, [chatStateDispatch, chatState.menuOpen]);
 
   return (
-    <div className="h-lvh text-blue-800">
+    <div className="h-lvh">
       <div className="h-full flex">
         <SideBar />
         <Chat />
