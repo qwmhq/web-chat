@@ -6,7 +6,7 @@
     "tsc": "tsc",
     "dev": "ts-node-dev src/index.ts",
     "lint": "eslint .",
-    "start": "tsc && node build/index.js",
+    "start": "tsc && node build/src/index.js",
     "test": "glob -c \"tsx --env-file .env --env-file .env.test --test --test-reporter spec \" \"./tests/**/*.test.ts\""
   },
   "keywords": [],

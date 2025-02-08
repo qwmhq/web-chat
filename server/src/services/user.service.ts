@@ -1,7 +1,7 @@
 import config from "../utils/config";
+import jwt from "../utils/jwt";
 import User from "../models/user.model";
 import { NewUser } from "../dtos/auth.dtos";
-import jwt from "jsonwebtoken";
 
 const createUser = async (object: NewUser) => {
   return User.create(object);
@@ -39,7 +39,7 @@ const loginUser = async (username: string, password: string) => {
   if (!config.JWT_SECRET) {
     throw Error("JWT_SECRET is undefined!");
   }
-  const token = jwt.sign(tokenPayload, config.JWT_SECRET);
+  const token = jwt.sign(tokenPayload);
   return {
     id: user.id,
     username,
