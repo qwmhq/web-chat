@@ -1,0 +1,15 @@
+### login
+# @name login
+POST http://localhost:3001/api/auth/login
+Content-Type: application/json
+
+{
+	"username": "blacklake32",
+	"password": "aweakpassword"
+}
+
+### get chats
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTM1OTAxMDgyM2IwZGM2NWNlMTdlYiIsInVzZXJuYW1lIjoiYmxhY2tsYWtlMzIiLCJpYXQiOjE3MzkwOTM1ODJ9._BgHqX7Cggw0fzeb7bl788-yiAc7ihjR2IjQZZqcZKs
+@authToken = {{login.response.body.token}}
+GET http://localhost:3001/api/chats/{{authToken}}
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTM1OTAxMDgyM2IwZGM2NWNlMTdlYiIsInVzZXJuYW1lIjoiYmxhY2tsYWtlMzIiLCJpYXQiOjE3MzkwOTM1ODJ9._BgHqX7Cggw0fzeb7bl788-yiAc7ihjR2IjQZZqcZKs

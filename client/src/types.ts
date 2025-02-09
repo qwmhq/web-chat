@@ -27,18 +27,28 @@ export interface User {
   username: string;
 }
 
+export interface Message {
+  senderId: string;
+  text: string;
+  timestamp: string;
+  delivered: boolean;
+  read: boolean;
+}
+
 export interface Chat {
   user: User;
-  messages: {
-    senderId: string;
-    receiverId: string;
-    text: string;
-    timestamp: string;
-  }[];
+  messages: Message[];
+  draft: string;
 }
 
 export interface ChatState {
-  chats: Chat[];
-  activeChatUserId?: string;
+  chats: { [id: string]: Chat };
+  activeChat?: string;
   menuOpen: boolean;
+}
+
+export interface GetChatsResponse {
+  id: string;
+  participants: [User, User];
+  messages: Message[];
 }

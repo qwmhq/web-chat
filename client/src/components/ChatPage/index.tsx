@@ -1,11 +1,14 @@
-import { useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { AccountContext } from "../../reducers/userReducer";
 import { io, Socket } from "socket.io-client";
 import SideBar from "./SideBar";
-import Chat from "./Chat";
 import { ChatContext, ChatStateActions } from "../../reducers/chatReducer";
-import { CurrentUser } from "../../types";
+import Chat from "./Chat";
+import { ChatState, CurrentUser } from "../../types";
 import { SOCKET_URL } from "../../constants";
+import chatService from "../../services/chatService";
+
+export const SocketContext = createContext<Socket | null>(null);
 
 const ChatPage = () => {
   const [userState, _userStateDispatch] = useContext(AccountContext);
@@ -35,6 +38,13 @@ const ChatPage = () => {
       console.log("server pinged!");
     });
 
+    socket.on("dm", (user, message) => {
+      chatStateDispatch({
+        type: ChatStateActions.IncomingMessage,
+        payload: { user, message },
+      });
+    });
+
     setSocket(socket);
 
     return () => {
@@ -43,85 +53,24 @@ const ChatPage = () => {
   }, [userState.currentUser]);
 
   useEffect(() => {
-    const chats = [
-      {
-        user: { id: "1", username: "Alice" },
-        messages: [
-          {
-            senderId: "1",
-            receiverId: userState.currentUser!.id,
-            text: "Hi Jane, how's your day going?",
-            timestamp: "2024-12-27T10:00:00Z",
-          },
-          {
-            senderId: userState.currentUser!.id,
-            receiverId: "1",
-            text: "Hey Alice, it's going well. How about you?",
-            timestamp: "2024-12-27T10:01:00Z",
-          },
-          {
-            senderId: "1",
-            receiverId: userState.currentUser!.id,
-            text: "Pretty good, thanks!",
-            timestamp: "2024-12-27T10:02:00Z",
-          },
-          {
-            senderId: userState.currentUser!.id,
-            receiverId: "1",
-            text: "You're welcome!",
-            timestamp: "2024-12-27T10:03:00Z",
-          },
-        ],
-      },
-      {
-        user: { id: "2", username: "Bob" },
-        messages: [
-          {
-            senderId: "2",
-            receiverId: userState.currentUser!.id,
-            text: "Jane, are you coming to the meeting?",
-            timestamp: "2024-12-26T14:15:00Z",
-          },
-          {
-            senderId: userState.currentUser!.id,
-            receiverId: "2",
-            text: "Yes, I'll be there in 10 minutes.",
-            timestamp: "2024-12-26T14:20:00Z",
-          },
-          {
-            senderId: "2",
-            receiverId: userState.currentUser!.id,
-            text: "Great, see you then!",
-            timestamp: "2024-12-26T14:22:00Z",
-          },
-        ],
-      },
-      {
-        user: { id: "3", username: "Charlie" },
-        messages: [
-          {
-            senderId: "3",
-            receiverId: userState.currentUser!.id,
-            text: "Hi Jane, do you have the notes from yesterday?",
-            timestamp: "2024-12-25T08:30:00Z",
-          },
-          {
-            senderId: userState.currentUser!.id,
-            receiverId: "3",
-            text: "Yes, I'll send them to you shortly.",
-            timestamp: "2024-12-25T08:45:00Z",
-          },
-          {
-            senderId: "3",
-            receiverId: userState.currentUser!.id,
-            text: "Thanks, Jane!",
-            timestamp: "2024-12-25T08:50:00Z",
-          },
-        ],
-      },
-    ];
+    const fetchChats = async () => {
+      const c = await chatService.getChats();
+      const chats: ChatState["chats"] = {};
+      c.forEach((chat) => {
+        const user =
+          chat.participants[0].id === userState.currentUser?.id
+            ? chat.participants[1]
+            : chat.participants[0];
+        chats[user.id] = {
+          user,
+          messages: chat.messages,
+          draft: "",
+        };
+      });
+      chatStateDispatch({ type: ChatStateActions.Initialize, payload: chats });
+    };
 
-    chatStateDispatch({ type: ChatStateActions.Initialize, payload: chats });
+    fetchChats();
   }, [chatStateDispatch, userState.currentUser]);
 
   useEffect(() => {
@@ -144,8 +93,10 @@ const ChatPage = () => {
   return (
     <div className="h-lvh">
       <div className="h-full flex">
-        <SideBar />
-        <Chat />
+        <SocketContext.Provider value={socket}>
+          <SideBar />
+          <Chat />
+        </SocketContext.Provider>
       </div>
     </div>
   );

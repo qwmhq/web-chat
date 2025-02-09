@@ -4,6 +4,7 @@ import "express-async-errors";
 import pingRouter from "./routes/ping";
 import authRouter from "./routes/auth";
 import userRouter from "./routes/user";
+import chatRouter from "./routes/chat";
 import { authenticate } from "./middleware/authMiddleware";
 
 const app = express();
@@ -19,5 +20,6 @@ app.use(authenticate);
 app.use("/api/ping", pingRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
+app.use("/api/chats", chatRouter);
 
 export default app;

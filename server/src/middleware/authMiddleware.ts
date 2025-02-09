@@ -11,7 +11,7 @@ export const authenticate = (
     req.token = authorizationHeader.replace("Bearer ", "");
     try {
       const payload = jwt.verify(req.token);
-      req.user = { id: payload.id };
+      req.user = { id: payload.id, username: payload.username };
     } catch {
       req.user = undefined;
     }
@@ -22,6 +22,7 @@ export const authenticate = (
 export const authorize = (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
     res.status(401).end();
+  } else {
+    next();
   }
-  next();
 };

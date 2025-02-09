@@ -1,5 +1,6 @@
 import { createContext } from "react";
 import { CurrentUser, LoginResponse, UserState } from "../types";
+import { clearToken, setToken } from "../constants";
 
 export enum UserStateActions {
   Initialize,
@@ -30,6 +31,7 @@ const reducer = (state: UserState, action: UserStateAction): UserState => {
       if (currentUserJson) {
         const currentUser: CurrentUser = JSON.parse(currentUserJson);
         newState.currentUser = currentUser;
+        setToken(currentUser.token);
       }
       newState.currentUserLoaded = true;
       return newState;
@@ -39,6 +41,7 @@ const reducer = (state: UserState, action: UserStateAction): UserState => {
         "currentUser",
         JSON.stringify(action.payload),
       );
+      setToken(action.payload.token);
       return {
         currentUser: { ...action.payload },
         currentUserLoaded: true,
@@ -46,6 +49,7 @@ const reducer = (state: UserState, action: UserStateAction): UserState => {
     }
     case UserStateActions.Logout: {
       window.localStorage.removeItem("currentUser");
+      clearToken();
       return { currentUserLoaded: true };
     }
     default:

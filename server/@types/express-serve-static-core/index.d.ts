@@ -5,6 +5,7 @@ declare module "express-serve-static-core" {
     token?: string;
     user?: {
       id: string;
+      username: string;
     };
   }
 }

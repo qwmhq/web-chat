@@ -9,7 +9,7 @@ import {
 import { ChatContext, ChatStateActions } from "../../reducers/chatReducer";
 import { AccountContext, UserStateActions } from "../../reducers/userReducer";
 import { useDebounce, useField } from "../../hooks";
-import { User } from "../../types";
+import { Chat, User } from "../../types";
 import userService from "../../services/userService";
 
 const SideBar = () => {
@@ -17,19 +17,19 @@ const SideBar = () => {
   const [chatState, chatStateDispatch] = useContext(ChatContext);
   const navigate = useNavigate();
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchField, _resetSearchField] = useField("text");
-  const debouncedSearchQuery = useDebounce(searchField.value, 700);
+  const [userSearchField, _resetSearchField] = useField("text");
+  const userSearchQuery = useDebounce(userSearchField.value, 700);
   const [searchResults, setSearchResults] = useState<User[]>([]);
 
   useEffect(() => {
-    if (debouncedSearchQuery) {
+    if (userSearchQuery) {
       userService
-        .search(debouncedSearchQuery)
+        .search(userSearchQuery)
         .then((results) => setSearchResults(results));
     } else {
       setSearchResults([]);
     }
-  }, [debouncedSearchQuery]);
+  }, [userSearchQuery]);
 
   const toggleMenu = () => {
     chatStateDispatch({ type: ChatStateActions.ToggleMenu });
@@ -44,10 +44,17 @@ const SideBar = () => {
     navigate("/login");
   };
 
-  const setActiveChat = (userId: string) => {
+  const setActiveChat = (chat: Chat) => {
     chatStateDispatch({
       type: ChatStateActions.SetActiveChat,
-      payload: userId,
+      payload: chat.user.id,
+    });
+  };
+
+  const initializeChat = (user: User) => {
+    chatStateDispatch({
+      type: ChatStateActions.NewChat,
+      payload: user,
     });
   };
 
@@ -59,7 +66,7 @@ const SideBar = () => {
         <div>
           <button
             onClick={toggleUserSearch}
-            className={`size-8 rounded-full ${chatState.menuOpen ? "bg-blue-50" : ""} transition-colors`}
+            className={`size-8 rounded-full ${searchOpen ? "bg-blue-50" : ""} transition-colors`}
           >
             <PlusCircleIcon className="size-5 mx-auto text-blue-800" />
           </button>
@@ -100,17 +107,23 @@ const SideBar = () => {
           </div>
           <div className="mt-4 w-full flex justify-center">
             <input
-              {...searchField}
+              {...userSearchField}
               className="w-[90%] text-sm rounded-xl"
               placeholder="Search username"
             />
           </div>
           <div className="mt-4">
-            {searchResults.map((x) => (
+            {searchResults.map((u) => (
               <button
-                key={x.id}
-                // onClick={() => setActiveChat(c.user.id)}
-                className={`w-full text-left px-4 py-2 border-b border-gray-200 ${chatState.activeChatUserId === x.id ? "bg-blue-100" : "hover:bg-blue-50"}`}
+                key={u.id}
+                onClick={() => {
+                  if (!chatState.chats[u.id]) {
+                    initializeChat(u);
+                  } else {
+                    setActiveChat({ user: u, messages: [], draft: "" });
+                  }
+                }}
+                className={`w-full text-left px-4 py-2 border-b border-gray-200 ${chatState.activeChat === u.id ? "bg-blue-100" : "hover:bg-blue-50"}`}
               >
                 <div className="flex items-center justify-start gap-3">
                   <div className="size-8 flex-grow-0 flex-shrink-0 rounded-full border inline-flex items-center justify-center">
@@ -118,7 +131,7 @@ const SideBar = () => {
                   </div>
                   <div className="max-w-[70%]">
                     <div className="text-lg font-medium text-blue-800">
-                      {x.username}
+                      {u.username}
                     </div>
                   </div>
                 </div>
@@ -128,13 +141,13 @@ const SideBar = () => {
         </div>
         {/* chat list */}
         <div className="overflow-y-scroll">
-          {chatState.chats.map((c) => {
-            const lastMessage = c.messages[c.messages.length - 1];
+          {Object.values(chatState.chats).map((chat) => {
+            const lastMessage = chat.messages[chat.messages.length - 1];
             return (
               <button
-                key={c.user.id}
-                onClick={() => setActiveChat(c.user.id)}
-                className={`w-full text-left px-4 py-2 border-b border-gray-200 ${chatState.activeChatUserId === c.user.id ? "bg-blue-100" : "hover:bg-blue-50"}`}
+                key={chat.user.id}
+                onClick={() => setActiveChat(chat!)}
+                className={`w-full text-left px-4 py-2 border-b border-gray-200 ${chatState.activeChat === chat.user.id ? "bg-blue-100" : "hover:bg-blue-50"}`}
               >
                 <div className="flex items-center justify-start gap-3">
                   <div className="size-8 flex-grow-0 flex-shrink-0 rounded-full border inline-flex items-center justify-center">
@@ -142,14 +155,16 @@ const SideBar = () => {
                   </div>
                   <div className="max-w-[70%]">
                     <div className="text-lg font-medium text-blue-800">
-                      {c.user.username}
+                      {chat.user.username}
                     </div>
-                    <div className="text-xs text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
-                      {lastMessage.senderId === userState.currentUser?.id && (
-                        <span className="font-semibold">You: </span>
-                      )}
-                      {lastMessage.text}
-                    </div>
+                    {lastMessage && (
+                      <div className="text-xs text-gray-600 overflow-hidden overflow-ellipsis whitespace-nowrap">
+                        {lastMessage.senderId === userState.currentUser?.id && (
+                          <span className="font-semibold">You: </span>
+                        )}
+                        {lastMessage.text}
+                      </div>
+                    )}
                   </div>
                 </div>
               </button>

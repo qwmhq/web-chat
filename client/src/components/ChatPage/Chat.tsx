@@ -1,23 +1,48 @@
-import { useContext } from "react";
-import { useField } from "../../hooks";
+import { SyntheticEvent, useContext } from "react";
 import { PaperAirplaneIcon } from "@heroicons/react/16/solid";
 import { AccountContext } from "../../reducers/userReducer";
-import { ChatContext } from "../../reducers/chatReducer";
+import { ChatContext, ChatStateActions } from "../../reducers/chatReducer";
+import { SocketContext } from ".";
 
 const Chat = () => {
   const [userState, _userStateDispatch] = useContext(AccountContext);
-  const [chatState, _chatStateDispatch] = useContext(ChatContext);
-  const [messageText, _resetMessageText] = useField("text");
+  const [chatState, chatStateDispatch] = useContext(ChatContext);
+  const socket = useContext(SocketContext);
 
-  const activeChat = chatState.chats.find(
-    (c) => c.user.id === chatState.activeChatUserId,
-  );
+  if (!chatState.activeChat) return <div className="w-full"></div>;
 
-  const sendMessage = () => {
-    //
+  const activeChat = chatState.chats[chatState.activeChat];
+
+  const updateMessageDraft = (event: React.ChangeEvent<HTMLInputElement>) => {
+    chatStateDispatch({
+      type: ChatStateActions.UpdateActiveChat,
+      payload: { ...activeChat, draft: event.target.value },
+    });
   };
 
-  if (!activeChat) return <div className="w-full"></div>;
+  const sendMessage = (e: SyntheticEvent) => {
+    e.preventDefault();
+
+    socket!.emit("dm", {
+      receiverId: activeChat.user.id,
+      message: activeChat.draft,
+    });
+
+    chatStateDispatch({
+      type: ChatStateActions.UpdateActiveChat,
+      payload: {
+        ...activeChat,
+        messages: activeChat.messages.concat({
+          senderId: userState.currentUser!.id,
+          text: activeChat.draft,
+          timestamp: Date.now().toString(),
+          delivered: false,
+          read: false,
+        }),
+        draft: "",
+      },
+    });
+  };
 
   return (
     <div className="w-full flex flex-col">
@@ -38,16 +63,20 @@ const Chat = () => {
             .reverse()}
         </div>
       </div>
-      <div className="px-4 py-2 border-t-2 border-t-gray-200 flex justify-between gap-2">
-        <input
-          {...messageText}
-          id="messageText"
-          placeholder="Type a message"
-          className="w-full rounded-full"
-        />
-        <button onClick={sendMessage}>
-          <PaperAirplaneIcon className="text-blue-500 size-8" />
-        </button>
+      <div className="px-4 py-2 border-t-2 border-t-gray-200 ">
+        <form onSubmit={sendMessage} className="flex justify-between gap-2">
+          <input
+            type="text"
+            value={activeChat.draft}
+            onChange={updateMessageDraft}
+            id="messageText"
+            placeholder="Type a message"
+            className="w-full rounded-full"
+          />
+          <button onClick={sendMessage}>
+            <PaperAirplaneIcon className="text-blue-500 size-8" />
+          </button>
+        </form>
       </div>
     </div>
   );
