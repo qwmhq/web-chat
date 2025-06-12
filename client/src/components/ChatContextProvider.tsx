@@ -5,7 +5,7 @@ export const ChatContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [chatState, dispatch] = useReducer(chatReducer, {
-    chats: [],
+    chats: {},
     menuOpen: false,
   });
   return (
