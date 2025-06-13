@@ -1,12 +1,13 @@
 import { useContext, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import ChatPage from "./components/ChatPage";
+import ChatPage from "./pages/ChatPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ChatContextProvider } from "./components/ChatContextProvider";
 import { AccountContext, UserStateActions } from "./reducers/userReducer";
 import { Toaster } from "./components/ui/sonner";
+import { SocketContextProvider } from "./components/SocketContextProvider";
 
 const App = () => {
   const [_userState, userStateDispatch] = useContext(AccountContext);
@@ -25,7 +26,9 @@ const App = () => {
             path="/"
             element={
               <ChatContextProvider>
-                <ChatPage />
+                <SocketContextProvider>
+                  <ChatPage />
+                </SocketContextProvider>
               </ChatContextProvider>
             }
           />

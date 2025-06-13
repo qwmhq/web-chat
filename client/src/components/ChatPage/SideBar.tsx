@@ -140,7 +140,7 @@ const SideBar = () => {
           </div>
         </div>
         {/* chat list */}
-        <div className="overflow-y-scroll">
+        <div className="overflow-y-auto">
           {Object.values(chatState.chats).map((chat) => {
             const lastMessage = chat.messages[chat.messages.length - 1];
             return (
