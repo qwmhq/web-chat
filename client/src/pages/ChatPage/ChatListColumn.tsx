@@ -12,14 +12,17 @@ import { Chat } from "@/types";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
+import ChatSearch from "./ChatSearch";
 
 type Props = {
   openChatFn: () => void;
+  searchOpen: boolean;
   openSearchFn: () => void;
+  closeSearchFn: () => void;
   className?: string;
 };
 
-const ChatListColumn = ({ openChatFn, openSearchFn, className }: Props) => {
+const ChatListColumn = ({ openChatFn, searchOpen, openSearchFn, closeSearchFn, className }: Props) => {
   const { theme, setTheme } = useTheme();
   const switchTheme = (checked: boolean) => {
     checked ? setTheme("dark") : setTheme("light");
@@ -45,8 +48,8 @@ const ChatListColumn = ({ openChatFn, openSearchFn, className }: Props) => {
   const chats = Object.values(chatState.chats);
 
   return (
-    <div className={cn("", className)}>
-      <header className="px-4 py-2 flex items-center gap-4">
+    <div className={cn("relative", className)}>
+      <header className="h-12 px-4 py-2 flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="cursor-pointer outline-none">
@@ -133,6 +136,11 @@ const ChatListColumn = ({ openChatFn, openSearchFn, className }: Props) => {
           </div>
         }
       </div>
+      <ChatSearch
+        closeFn={closeSearchFn}
+        openChatFn={openChatFn}
+        className={`absolute hidden md:block w-full h-full bg-background top-0 ${searchOpen ? "left-0" : "-left-[50vw]"} transition-[left] duration-500`}
+      />
     </div>
   );
 };

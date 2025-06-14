@@ -68,18 +68,20 @@ const ChatOverlay = ({ closeFn }: { closeFn: () => void }) => {
         </button>
       </header>
       <Separator orientation="horizontal" />
-      <div className="grow-1 pb-2 flex flex-col justify-end bg-accent">
-        <div className="px-2 overflow-y-auto flex flex-col gap-1.5">
-          {activeChat.messages
-            .map((m, idx) => (
-              <div
-                key={idx}
-                className={`w-fit max-w-[90%] px-4 py-2 rounded-2xl ${m.senderId === userState.currentUser?.id ? "mr-0 ml-auto bg-primary-foreground text-primary" : "bg-primary text-primary-foreground"}`}
-              >
-                {m.text}
-              </div>
-            ))
-          }
+      <div className="grow-1 flex flex-col overflow-y-auto">
+        <div className="grow-1 flex flex-col justify-end bg-accent">
+          <div className="py-2 px-2 flex flex-col gap-1.5">
+            {activeChat.messages
+              .map((m, idx) => (
+                <div
+                  key={idx}
+                  className={`w-fit max-w-[90%] px-4 py-2 rounded-2xl ${m.senderId === userState.currentUser?.id ? "mr-0 ml-auto bg-primary-foreground text-primary" : "bg-primary text-primary-foreground"}`}
+                >
+                  {m.text}
+                </div>
+              ))
+            }
+          </div>
         </div>
       </div>
       <Separator orientation="horizontal" />

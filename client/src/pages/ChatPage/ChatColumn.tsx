@@ -57,9 +57,9 @@ const ChatColumn = ({ className }: Props) => {
   };
 
   return (
-    <div className={cn("", className)}>
+    <div className={cn("relative", className)}>
       <div className="h-svh flex flex-col bg-accent">
-        <header className="px-4 py-3 flex items-center justify-between bg-background">
+        <header className="h-12 px-4 py-3 flex items-center justify-between bg-background">
           <div className="flex items-center">
             <Avatar className="ml-3 size-6">
               <AvatarFallback>{activeChat.user.username[0].toUpperCase()}</AvatarFallback>
@@ -71,9 +71,9 @@ const ChatColumn = ({ className }: Props) => {
           </button>
         </header>
         <Separator orientation="horizontal" />
-        <div className="xl:w-2xl xl:mx-auto grow-1 flex flex-col">
-          <div className="grow-1 pb-2 flex flex-col justify-end bg-accent">
-            <div className="px-4 overflow-y-auto flex flex-col gap-1.5">
+        <div className="xl:w-2xl xl:mx-auto grow-1 flex flex-col overflow-y-auto">
+          <div className="grow-1 flex flex-col justify-end bg-accent">
+            <div className="py-4 px-4 flex flex-col gap-1.5">
               {activeChat.messages
                 .map((m, idx) => (
                   <div
@@ -86,8 +86,10 @@ const ChatColumn = ({ className }: Props) => {
               }
             </div>
           </div>
-          <Separator orientation="horizontal" />
-          <div className="px-3 py-1.5 bg-background">
+        </div>
+        <Separator orientation="horizontal" />
+        <div className="bg-background">
+          <div className="xl:w-2xl xl:mx-auto h-12 px-3 py-1.5 bg-background">
             <div className="flex justify-between gap-2">
               <Input
                 type="text"
@@ -105,6 +107,7 @@ const ChatColumn = ({ className }: Props) => {
               </button>
             </div>
           </div>
+
         </div>
       </div>
     </div>

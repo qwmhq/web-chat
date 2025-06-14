@@ -24,7 +24,9 @@ const Page = () => {
     <div className="min-h-svh w-full flex flex-col md:grid md:grid-cols-[2fr_auto_3fr] lg:grid-cols-[2fr_auto_5fr]">
       <ChatListColumn
         openChatFn={() => setMobileChatOpen(true)}
+        searchOpen={searchOpen}
         openSearchFn={() => setSearchOpen(true)}
+        closeSearchFn={() => setSearchOpen(false)}
       />
       <Separator orientation="vertical" className="hidden md:block" />
       <ChatColumn className="hidden md:block" />
@@ -43,7 +45,7 @@ const Page = () => {
         </SheetContent>
       </Sheet>
       <Sheet
-        open={searchOpen}
+        open={isMobile && searchOpen}
         onOpenChange={setSearchOpen}
       >
         <SheetTitle className="sr-only">Start a new chat</SheetTitle>

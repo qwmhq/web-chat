@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useDebounce, useField } from "@/hooks";
+import { cn } from "@/lib/utils";
 import { ChatContext, ChatStateActions } from "@/reducers/chatReducer";
 import userService from "@/services/userService";
 import { Chat, User } from "@/types";
@@ -11,9 +12,10 @@ import { useContext, useEffect, useState } from "react";
 type Props = {
   closeFn: () => void;
   openChatFn: () => void;
+  className?: string;
 };
 
-const ChatSearch = ({ closeFn, openChatFn }: Props) => {
+const ChatSearch = ({ closeFn, openChatFn, className }: Props) => {
   const [chatState, chatStateDispatch] = useContext(ChatContext);
   const [userSearchField, _resetSearchField] = useField("text");
   const userSearchQuery = useDebounce(userSearchField.value, 700);
@@ -44,7 +46,7 @@ const ChatSearch = ({ closeFn, openChatFn }: Props) => {
   };
 
   return (
-    <>
+    <div className={cn("", className)}>
       <header className="px-4 py-2 flex items-center gap-4">
         <button className="cursor-pointer" onClick={closeFn}>
           <ArrowLeft />
@@ -62,7 +64,7 @@ const ChatSearch = ({ closeFn, openChatFn }: Props) => {
             return (
               <div key={u.id}>
                 <button
-                  className="w-full py-1 px-2 cursor-pointer flex items-center hover:bg-gray-50"
+                  className="w-full py-1 px-2 cursor-pointer flex items-center hover:bg-accent"
                   onClick={() => {
                     if (!chatState.chats[u.id]) {
                       initializeChat(u);
@@ -83,9 +85,9 @@ const ChatSearch = ({ closeFn, openChatFn }: Props) => {
               </div>
             )
           })}
-        </div> :
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
