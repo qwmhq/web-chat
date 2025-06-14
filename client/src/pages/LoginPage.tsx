@@ -1,3 +1,4 @@
+import { useTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,11 +13,13 @@ import { useField } from "@/hooks";
 import { AccountContext, UserStateActions } from "@/reducers/userReducer";
 import authService from "@/services/authService";
 import { AxiosError } from "axios";
+import { Moon, Sun } from "lucide-react";
 import { useContext } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const Page = () => {
+  const { setTheme } = useTheme();
   const navigate = useNavigate();
   const [usernameField, _resetUsername] = useField("text");
   const [passwordField, _resetPassword] = useField("password");
@@ -107,6 +110,16 @@ const Page = () => {
             </CardContent>
           </Card>
         </div>
+      </div>
+      <div>
+        <Sun
+          className="size-6 absolute top-6 right-6 dark:hidden"
+          onClick={() => setTheme("dark")}
+        />
+        <Moon
+          className="size-6 absolute top-6 right-6 not-dark:hidden"
+          onClick={() => setTheme("light")}
+        />
       </div>
     </div>
   );

@@ -13,8 +13,11 @@ import authService from "@/services/authService";
 import { AxiosError } from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { Moon, Sun } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
 
 const Page = () => {
+  const { setTheme } = useTheme();
   const [usernameField, _resetUsername] = useField("text");
   const [passwordField, _resetPassword] = useField("password");
 
@@ -90,6 +93,16 @@ const Page = () => {
             </CardContent>
           </Card>
         </div>
+      </div>
+      <div>
+        <Sun
+          className="size-6 absolute top-6 right-6 dark:hidden"
+          onClick={() => setTheme("dark")}
+        />
+        <Moon
+          className="size-6 absolute top-6 right-6 not-dark:hidden"
+          onClick={() => setTheme("light")}
+        />
       </div>
     </div>
   );

@@ -10,6 +10,7 @@ import { ChatContext, ChatStateActions } from "@/reducers/chatReducer";
 import { AccountContext, UserStateActions } from "@/reducers/userReducer";
 import { Chat } from "@/types";
 import { Switch } from "@/components/ui/switch";
+import { useTheme } from "@/components/theme-provider";
 
 type Props = {
   openChatFn: () => void;
@@ -17,6 +18,10 @@ type Props = {
 };
 
 const ChatListColumn = ({ openChatFn, openSearchFn }: Props) => {
+  const { theme, setTheme } = useTheme();
+  const switchTheme = (checked: boolean) => {
+    checked ? setTheme("dark") : setTheme("light");
+  };
   const navigate = useNavigate();
   const [userState, userStateDispatch] = useContext(AccountContext);
   const [chatState, chatStateDispatch] = useContext(ChatContext);
@@ -57,12 +62,18 @@ const ChatListColumn = ({ openChatFn, openSearchFn }: Props) => {
                 <span>New Chat</span>
               </div>
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex items-center justify-between">
+            <DropdownMenuItem
+              className="flex items-center justify-between"
+              onSelect={(e) => e.preventDefault()}
+            >
               <div className="flex items-center gap-3">
                 <Moon className="size-5" />
                 <span>Night Mode</span>
               </div>
-              <Switch />
+              <Switch
+                checked={theme === "dark"}
+                onCheckedChange={switchTheme}
+              />
             </DropdownMenuItem>
             <DropdownMenuItem onClick={logOut}>
               <div className="flex items-center gap-3">
@@ -83,7 +94,7 @@ const ChatListColumn = ({ openChatFn, openSearchFn }: Props) => {
               return (
                 <div key={chat.user.id}>
                   <button
-                    className="w-full py-1 px-2 cursor-pointer flex items-center hover:bg-gray-50"
+                    className="w-full py-1 px-2 cursor-pointer flex items-center hover:bg-accent"
                     onClick={() => {
                       setActiveChat(chat);
                       openChatFn();

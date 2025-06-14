@@ -68,7 +68,7 @@ const ChatOverlay = ({ closeFn }: { closeFn: () => void }) => {
         </button>
       </header>
       <Separator orientation="horizontal" />
-      <div className="grow-1 pb-2 flex flex-col justify-end bg-gray-300">
+      <div className="grow-1 pb-2 flex flex-col justify-end bg-accent">
         <div className="px-2 overflow-y-auto flex flex-col gap-1.5">
           {activeChat.messages
             .map((m, idx) => (
