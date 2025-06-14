@@ -9,22 +9,28 @@ import { ChatContext, ChatStateActions } from "@/reducers/chatReducer";
 import ChatOverlay from "./ChatOverlay";
 import ChatListColumn from "./ChatListColumn";
 import ChatSearch from "./ChatSearch";
+import { Separator } from "@/components/ui/separator";
+import ChatColumn from "./ChatColumn";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Page = () => {
+  const isMobile = useIsMobile();
   const [_userState, _userStateDispatch] = useContext(AccountContext);
   const [_chatState, chatStateDispatch] = useContext(ChatContext);
-  const [chatOpen, setChatOpen] = useState(false);
+  const [mobileChatOpen, setMobileChatOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
-    <div className="min-h-svh w-full flex flex-col">
+    <div className="min-h-svh w-full flex flex-col md:grid md:grid-cols-[2fr_auto_3fr] lg:grid-cols-[2fr_auto_5fr]">
       <ChatListColumn
-        openChatFn={() => setChatOpen(true)}
+        openChatFn={() => setMobileChatOpen(true)}
         openSearchFn={() => setSearchOpen(true)}
       />
+      <Separator orientation="vertical" className="hidden md:block" />
+      <ChatColumn className="hidden md:block" />
       <Sheet
-        open={chatOpen}
-        onOpenChange={setChatOpen}
+        open={isMobile && mobileChatOpen}
+        onOpenChange={setMobileChatOpen}
       >
         <SheetTitle className="sr-only">Chat Page</SheetTitle>
         <SheetContent
@@ -33,7 +39,7 @@ const Page = () => {
           onCloseAutoFocus={() => chatStateDispatch({ type: ChatStateActions.UnsetActiveChat })}
           aria-describedby={undefined}
         >
-          <ChatOverlay closeFn={() => setChatOpen(false)} />
+          <ChatOverlay closeFn={() => setMobileChatOpen(false)} />
         </SheetContent>
       </Sheet>
       <Sheet
@@ -49,7 +55,7 @@ const Page = () => {
         >
           <ChatSearch
             closeFn={() => setSearchOpen(false)}
-            openChatFn={() => setChatOpen(true)}
+            openChatFn={() => setMobileChatOpen(true)}
           />
         </SheetContent>
       </Sheet>

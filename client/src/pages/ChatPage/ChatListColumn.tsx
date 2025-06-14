@@ -11,16 +11,21 @@ import { AccountContext, UserStateActions } from "@/reducers/userReducer";
 import { Chat } from "@/types";
 import { Switch } from "@/components/ui/switch";
 import { useTheme } from "@/components/theme-provider";
+import { cn } from "@/lib/utils";
 
 type Props = {
   openChatFn: () => void;
   openSearchFn: () => void;
+  className?: string;
 };
 
-const ChatListColumn = ({ openChatFn, openSearchFn }: Props) => {
+const ChatListColumn = ({ openChatFn, openSearchFn, className }: Props) => {
   const { theme, setTheme } = useTheme();
   const switchTheme = (checked: boolean) => {
     checked ? setTheme("dark") : setTheme("light");
+  };
+  const toggleTheme = () => {
+    theme === "dark" ? setTheme("light") : setTheme("dark");
   };
   const navigate = useNavigate();
   const [userState, userStateDispatch] = useContext(AccountContext);
@@ -40,7 +45,7 @@ const ChatListColumn = ({ openChatFn, openSearchFn }: Props) => {
   const chats = Object.values(chatState.chats);
 
   return (
-    <>
+    <div className={cn("", className)}>
       <header className="px-4 py-2 flex items-center gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -65,6 +70,7 @@ const ChatListColumn = ({ openChatFn, openSearchFn }: Props) => {
             <DropdownMenuItem
               className="flex items-center justify-between"
               onSelect={(e) => e.preventDefault()}
+              onClick={toggleTheme}
             >
               <div className="flex items-center gap-3">
                 <Moon className="size-5" />
@@ -127,7 +133,7 @@ const ChatListColumn = ({ openChatFn, openSearchFn }: Props) => {
           </div>
         }
       </div>
-    </>
+    </div>
   );
 };
 
