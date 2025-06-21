@@ -23,4 +23,14 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/chats", chatRouter);
 
+app.get("*", (req, res) => {
+  if (req.accepts("html")) {
+    res.sendFile("index.html", { root: "dist" });
+  } else if (req.accepts("json")) {
+    res.status(404).json({ error: "Not Found" });
+  } else {
+    res.status(404).send("Not Found");
+  }
+});
+
 export default app;
